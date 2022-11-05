@@ -153,7 +153,7 @@ func AnalyzeScript(r *interp.Runner, fl *syntax.File) ([]Finding, error) {
 				})
 				continue
 			}
-		case "licenses":
+		case "license":
 			valSlice, ok := mustBeArray(val, name, &findings)
 			if !ok {
 				continue
