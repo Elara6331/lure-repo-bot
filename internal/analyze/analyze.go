@@ -254,7 +254,11 @@ func AnalyzeScript(r *interp.Runner, fl *syntax.File) ([]Finding, error) {
 			}
 
 			for i, val := range valSlice {
-				if val != "SKIP" && len(val) != 64 {
+				if strings.EqualFold(val, "SKIP") {
+					continue
+				}
+
+				if len(val) != 64 {
 					findings = append(findings, Finding{
 						ItemType: "element",
 						ItemName: name,
@@ -264,17 +268,15 @@ func AnalyzeScript(r *interp.Runner, fl *syntax.File) ([]Finding, error) {
 					continue
 				}
 
-				if val != "SKIP" {
-					_, err := hex.DecodeString(val)
-					if err != nil {
-						findings = append(findings, Finding{
-							ItemType: "element",
-							ItemName: name,
-							Index:    i,
-							Msg:      "The %s contains an invalid SHA256 checksum. SHA256 hashes must be valid hexadecimal.",
-						})
-						continue
-					}
+				_, err := hex.DecodeString(val)
+				if err != nil {
+					findings = append(findings, Finding{
+						ItemType: "element",
+						ItemName: name,
+						Index:    i,
+						Msg:      "The %s contains an invalid SHA256 checksum. SHA256 hashes must be valid hexadecimal.",
+					})
+					continue
 				}
 			}
 		case "backup":
